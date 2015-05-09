@@ -3,6 +3,8 @@
 # hapi-pkg
 [Hapi](http://hapijs.com) Plugin which provides a JSON API to package.json properties.
 
+[![NPM](https://nodei.co/npm/hapi-pkg.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/hapi-pkg/)
+
 ## Example
 
 ```javascript
