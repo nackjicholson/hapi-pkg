@@ -135,7 +135,7 @@ server.register({
 // GET "/api/users/0/alias" => {"alias": "nackjicholson"}
 ```
 
-I know that's not a perfect api...but it's pretty good for something I implemented on accident :simple_smile:
+I know that's not a perfect api...but it's pretty good for something I implemented on accident :smiley:
 
 ## Contribute
 
