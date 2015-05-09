@@ -1,6 +1,6 @@
 {
   "name": "hapi-pkg",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Hapi Plugin which provides a JSON API to package.json properties.",
   "main": "es5/hapi-pkg.js",
   "scripts": {
