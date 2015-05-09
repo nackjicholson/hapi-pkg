@@ -42,7 +42,7 @@ describe('hapi-pkg', () => {
         server.register({
           register: hapiPkg,
           options: options
-        }, () => {});
+        }, err => err);
       });
 
       it(`should respond to "/${endpoint} route`, (done) => {

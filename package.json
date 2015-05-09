@@ -1,7 +1,7 @@
 {
   "name": "hapi-pkg",
   "version": "0.0.0",
-  "description": "Provides hapi routes to package.json properties.",
+  "description": "Hapi Plugin which provides a JSON API to package.json properties.",
   "main": "es5/hapi-pkg.js",
   "scripts": {
     "test": "./node_modules/.bin/gulp coverage"
