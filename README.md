@@ -1,2 +1,2 @@
 # hapi-pkg
-hapi plugin which provides routes to discover package.json properties.
+Provides [hapi](http://hapijs.com) routes to package.json properties

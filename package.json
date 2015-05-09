@@ -1,0 +1,50 @@
+{
+  "name": "hapi-pkg",
+  "version": "0.0.0",
+  "description": "Provides hapi routes to package.json properties.",
+  "main": "es5/hapi-pkg.js",
+  "scripts": {
+    "test": "./node_modules/.bin/gulp coverage"
+  },
+  "keywords": [
+    "hapi",
+    "package",
+    "package.json",
+    "pkg",
+    "health",
+    "healthcheck",
+    "plugin",
+    "info"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nackjicholson/hapi-pkg.git"
+  },
+  "author": "Will Vaughn <willieviseoae@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/nackjicholson/hapi-pkg/issues"
+  },
+  "homepage": "https://github.com/nackjicholson/hapi-pkg#readme",
+  "devDependencies": {
+    "babel": "^5.2.17",
+    "gulp": "^3.8.11",
+    "gulp-babel": "^5.1.0",
+    "gulp-istanbul": "^0.9.0",
+    "gulp-jscs": "^1.6.0",
+    "gulp-jshint": "^1.10.0",
+    "gulp-mocha": "^2.0.1",
+    "gulp-plumber": "^1.0.0",
+    "hapi": "^8.4.0",
+    "isparta": "^3.0.3",
+    "jshint-stylish": "^1.0.2",
+    "leche": "^2.1.1",
+    "mocha": "^2.2.4",
+    "require-dir": "^0.3.0"
+  },
+  "dependencies": {
+    "babel-runtime": "^5.2.17",
+    "boom": "^2.7.1",
+    "lodash": "^3.8.0"
+  }
+}
