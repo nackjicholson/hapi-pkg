@@ -50,7 +50,8 @@ function register(server, {pkg, endpoint}, next) {
 
 register.attributes = {
   // This is the hapi-pkg plugins' package.json info, not yours.
-  pkg: require('../package.json')
+  pkg: require('../package.json'),
+  multiple: true
 };
 
 export default register;

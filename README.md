@@ -1,11 +1,13 @@
 [![Build Status](https://travis-ci.org/nackjicholson/hapi-pkg.svg?branch=master)](https://travis-ci.org/nackjicholson/hapi-pkg)
 
 # hapi-pkg
-[Hapi](http://hapijs.com) Plugin which provides a JSON API to package.json properties.
+[Hapi](http://hapijs.com) Plugin which provides a JSON API to package.json
+
+Actually it provides JSON API routes to the properties of any object. More on that below.
 
 [![NPM](https://nodei.co/npm/hapi-pkg.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/hapi-pkg/)
 
-## Example
+## Usage
 
 ```javascript
 var Hapi = require('hapi');
@@ -27,18 +29,22 @@ server.register({
     console.log('Server running at:', server.info.uri);
   });
 });
+```
 
+Would return something like this
+
+```javascript
 // GET "/pkg" returns entire package.json
-// GET "/pkg/name" return package name
-// GET "/pkg/version" returns version number
-// GET "/pkg/dependencies" returns a list of dependencies
-// GET "/pkg/dependencies/lodash" returns lodash semver requirement.
+// GET "/pkg/name" return {"name": "my-module"}
+// GET "/pkg/version" returns {"version": "1.0.0"}
+// GET "/pkg/dependencies" returns {"dependencies": { "lodash": "^3.7.0" } }
+// GET "/pkg/dependencies/lodash" returns {"lodash": "^3.7.0"}
 ```
 
 ## Options
 The options you can send during registration.
 
-**options** {object} (required)
+#### pkg {object} required
 
 The plugin will not load if this option is not provided as an object literal.
 
@@ -47,7 +53,10 @@ server.register({
   register: require('hapi-pkg'),
   options: { pkg: 'this is a string' }
 }, function(err) {
-  // err: 'hapi-pkg option "pkg" is required to be an object'
+  if (err) {
+    console.log(err);
+    // 'hapi-pkg option "pkg" is required to be an object' 
+  }
 });
 ```
 
@@ -69,60 +78,111 @@ server.register({
 });
 ```
 
-
 ## Some cool stuff about hapi-pkg
 
-#### Add custom things to package.json, and it becomes a route.
-If you have any static information you want your server to expose, you can just put it in your package.json.
-For example, if you wanted to provide the server with a descriptive healthcheck route "/pkg/health" for load balancing
-and what not. You could add this to your package.json:
+#### Add anything to package.json, and it becomes a route.
+If you have any static information you want your server to expose, you can just put it in your package.json. For
+example, try adding something like this.
 
 ```
 {
-  "health": "ok"
+  "easter": "egg"
 }
 ```
 
-Now your server would have a "/pkg/health" route which returns `200 OK {"health": "ok"}`. This is a contrived example,
-because using "/pkg/name" is also a valid healthcheck route, but it exemplifies the ability to add things to your
-package.json and have them be accessible via the api.
+`GET '/pkg/easter'` => `{"easter": "egg"}`
 
-#### This plugin actually has nothing to do with package.json
-When I started building hapi-pkg I had package.json information in mind, and so the standard thing to
-provide as the `pkg` option is a reference to your project's package.json `pkg: require('./package.json')`.
-Interestingly though, you can provide hapi-pkg with any object literal and it will build a JSON API to it's properties
-for you. I'm sure there are applications of this feature I haven't thought of and I leave it to you guys, but here's
-an example of using a custom object to provide a static api.
+#### This actually has nothing to do with package.json
+Yeah, you can load up your `package.json`. How often is all of that data actually useful? Like never.
+
+So why did I even write this plugin? Well, load balancers have this thing called a "healthcheck", which is a route on
+your app server which is expected to be `200 OK`. I found myself writing the same "healthcheck" route on every new
+hapi server I make.
+
+Here's something I might actually do to provide a nice "healthcheck" route for a load balancer or something like that.
+
+```javascript
+server.register({
+  register: require('hapi-pkg'),
+  options: {
+    pkg: {status: 'ok'},
+    endpoint: 'health'
+  }
+}, (err) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  
+  server.start()
+});
+```
+
+`GET "/health"` => `200 OK {"status": "ok"}`
+
+#### Here's a crazy idea.
+
+You could create a really bad mock api for a prototype or something.
 
 ```javascript
 var Hapi = require('hapi');
+var hapiPkg = require('hapi-pkg');
 
 var server = new Hapi.Server();
 server.connection({ port: 3000 });
 
-var myApi = {
-  ping: 'pong',
-  users: [
+// Let's hard code some arrays to be our "database" **air quotes**.
+let database = {
+  authors: [
     {
       name: 'will',
-      alias: 'nackjicholson'
+      alias: 'nackjicholson',
+      posts: [0, 2]
     },
     {
       name: 'peter',
-      alias: 'spiderman'
+      alias: 'spiderman',
+      posts: [1]
     }
+  ],
+  posts: [
+    {
+      title: 'Secret to Web Development',
+      content: 'Regular stretching to prevent carpal tunnel syndrome',
+      author: 0
+    },
+    {
+      title: 'Secret to Web Slinging',
+      content: 'Regular stretching to prevent carpal tunnel syndrome',
+      author: 1
+    }
+    {
+      title: 'How NOT to Build a Prototype',
+      content: 'You are looking at it.',
+      author: 0
   ]
-};  
+};
 
-server.register({
-  register: require('hapi-pkg'),
-  options: {
-    pkg: myApi,
-    endpoint: 'api'
+// You can load this plugin multiple times!
+// Providing two new resource routes, one for "/authors" and another for "/posts"
+server.register([
+  {
+    register: hapiPkg,
+    options: {
+      pkg: {authors: database.authors},
+      endpoint: 'authors'
+    }
+  },
+  {
+    register: hapiPkg,
+    options: {
+      pkg: {posts: database.posts},
+      endpoint: 'posts'
+    }
   }
-}, function(err) {
+], function(err) {
   if (err) {
-    console.log(err);
+    throw err;
   }
 
   server.start(function () {
@@ -130,14 +190,15 @@ server.register({
   });
 });
 
-// GET "/api" returns myApi object
-// GET "/api/ping" => {"ping": "pong"}
-// GET "/api/users" => collection of users.
-// GET "/api/users/0" => {"0": {"name": "will", "alias": "nackjicholson"}}
-// GET "/api/users/0/alias" => {"alias": "nackjicholson"}
+// GET "/authors" => authors collection.
+// GET "/authors/0" => {"name":"will","alias":"nackjicholson","posts": [0,2]}
+// GET "/authors/0/posts" => {"posts": [0,2]}
+// GET "/posts" => posts collection
+// GET "/posts/2/author" => {"author": 0}
 ```
 
-I know that's not a perfect api...but it's pretty good for something I implemented on accident :smiley:
+I know that's not a perfect api, but it's pretty good for something I implemented on accident :smiley:
+You're on your own for the PUT/POST/DELETE routes.
 
 ## Contribute
 

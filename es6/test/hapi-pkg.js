@@ -29,22 +29,30 @@ describe('hapi-pkg', () => {
     });
   });
 
-  withData({
-    'default endpoint': [{pkg}, 'pkg'],
-    '"info" endpoint': [{pkg, endpoint: 'info'}, 'info']
-  }, (options, endpoint) => {
-    describe('routes', () => {
-      let server;
+  describe('routes', () => {
+    let server;
 
-      beforeEach(() => {
-        server = new Server();
-        server.connection();
-        server.register({
+    beforeEach(() => {
+      server = new Server();
+      server.connection();
+      // Testing the loading of two plugins.
+      server.register([
+        {
           register: hapiPkg,
-          options: options
-        }, err => err);
-      });
+          options: {pkg}
+        },
+        {
+          register: hapiPkg,
+          options: {pkg, endpoint: 'info'}
+        }
+      ], err => err);
+    });
 
+    // This data helps test both sets of routes at once.
+    withData([
+      ['pkg'],
+      ['info']
+    ], (endpoint) => {
       it(`should respond to "/${endpoint} route`, (done) => {
         server.inject(`/${endpoint}`, (res) => {
           assert.deepEqual(res.result, pkg);

@@ -19,3 +19,7 @@ createLintTask('lint-es6', ['es6/**/*.js']);
 
 // Lint our test code
 createLintTask('lint-es6-test', ['es6/test/**/*.js']);
+
+gulp.task('lint', function() {
+  gulp.watch(['es6/**/*', 'es6/test/**/*.js'], ['lint-es6', 'lint-es6-test']);
+});
