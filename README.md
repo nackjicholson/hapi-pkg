@@ -125,43 +125,43 @@ server.register({
 You could create a really bad mock api for a prototype or something.
 
 ```javascript
-var Hapi = require('hapi');
-var hapiPkg = require('hapi-pkg');
+let Hapi = require('hapi');
+let hapiPkg = require('hapi-pkg');
 
-var server = new Hapi.Server();
+let server = new Hapi.Server();
 server.connection({ port: 3000 });
 
 // Let's hard code some arrays to be our "database" **air quotes**.
-let database = {
-  authors: [
-    {
-      name: 'will',
-      alias: 'nackjicholson',
-      posts: [0, 2]
-    },
-    {
-      name: 'peter',
-      alias: 'spiderman',
-      posts: [1]
-    }
-  ],
-  posts: [
-    {
-      title: 'Secret to Web Development',
-      content: 'Regular stretching to prevent carpal tunnel syndrome',
-      author: 0
-    },
-    {
-      title: 'Secret to Web Slinging',
-      content: 'Regular stretching to prevent carpal tunnel syndrome',
-      author: 1
-    }
-    {
-      title: 'How NOT to Build a Prototype',
-      content: 'You are looking at it.',
-      author: 0
-  ]
-};
+let authors =  [
+  {
+    name: 'will',
+    alias: 'nackjicholson',
+    posts: [0, 2]
+  },
+  {
+    name: 'peter',
+    alias: 'spiderman',
+    posts: [1]
+  }
+];
+
+let posts = [
+  {
+    title: 'Secret to Web Development',
+    content: 'Regular stretching to prevent carpal tunnel syndrome',
+    author: 0
+  },
+  {
+    title: 'Secret to Web Slinging',
+    content: 'Regular stretching to prevent carpal tunnel syndrome',
+    author: 1
+  }
+  {
+    title: 'How NOT to Build a Prototype',
+    content: 'You are looking at it.',
+    author: 0
+  }
+];
 
 // You can load this plugin multiple times!
 // Providing two new resource routes, one for "/authors" and another for "/posts"
@@ -169,23 +169,23 @@ server.register([
   {
     register: hapiPkg,
     options: {
-      pkg: {authors: database.authors},
+      pkg: {authors},
       endpoint: 'authors'
     }
   },
   {
     register: hapiPkg,
     options: {
-      pkg: {posts: database.posts},
+      pkg: {posts},
       endpoint: 'posts'
     }
   }
-], function(err) {
+], (err) => {
   if (err) {
     throw err;
   }
 
-  server.start(function () {
+  server.start(() => {
     console.log('Server running at:', server.info.uri);
   });
 });
