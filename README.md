@@ -60,7 +60,7 @@ server.register({
 });
 ```
 
-**endpoint** {string} (default='pkg')
+#### endpoint {string} default:'pkg'
 
 Routes for this plugin are prefixed with "/pkg" by default. If you'd like to customize that, you can use the `endpoint`
 option.
