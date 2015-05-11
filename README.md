@@ -1,13 +1,13 @@
 [![Build Status](https://travis-ci.org/nackjicholson/hapi-pkg.svg?branch=master)](https://travis-ci.org/nackjicholson/hapi-pkg)
 
 # hapi-pkg
-[Hapi](http://hapijs.com) Plugin which provides a JSON API to package.json
-
-Actually it provides JSON API routes to the properties of any object. More on that below.
+[Hapi](http://hapijs.com) Plugin which provides a JSON API to object properties.
 
 [![NPM](https://nodei.co/npm/hapi-pkg.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/hapi-pkg/)
 
 ## Usage
+
+One simple source of object properties all our apps have is `package.json`.
 
 ```javascript
 var Hapi = require('hapi');
@@ -29,11 +29,7 @@ server.register({
     console.log('Server running at:', server.info.uri);
   });
 });
-```
 
-Would return something like this
-
-```javascript
 // GET "/pkg" returns entire package.json
 // GET "/pkg/name" return {"name": "my-module"}
 // GET "/pkg/version" returns {"version": "1.0.0"}
@@ -41,65 +37,13 @@ Would return something like this
 // GET "/pkg/dependencies/lodash" returns {"lodash": "^3.7.0"}
 ```
 
-## Options
-The options you can send during registration.
-
-#### pkg {object} required
-
-The plugin will not load if this option is not provided as an object literal.
-
-```javascript
-server.register({
-  register: require('hapi-pkg'),
-  options: { pkg: 'this is a string' }
-}, function(err) {
-  if (err) {
-    console.log(err);
-    // 'hapi-pkg option "pkg" is required to be an object' 
-  }
-});
-```
-
-#### endpoint {string} default:'pkg'
-
-Routes for this plugin are prefixed with "/pkg" by default. If you'd like to customize that, you can use the `endpoint`
-option.
-
-```javascript
-server.register({
-  register: require('hapi-pkg'),
-  options: {
-    pkg: require('./package.json'),
-    endpoint: 'info'
-  }
-}, function(err) {
-  server.start()
-  // hapi-pkg routes at "/info" instead of "/pkg"
-});
-```
-
-## Some cool stuff about hapi-pkg
-
-#### Add anything to package.json, and it becomes a route.
-If you have any static information you want your server to expose, you can just put it in your package.json. For
-example, try adding something like this.
-
-```
-{
-  "easter": "egg"
-}
-```
-
-`GET '/pkg/easter'` => `{"easter": "egg"}`
-
-#### This actually has nothing to do with package.json
+#### Actually though, this plugin has nothing to do with package.json
 Yeah, you can load up your `package.json`. How often is all of that data actually useful? Like never.
 
 So why did I even write this plugin? Well, load balancers have this thing called a "healthcheck", which is a route on
 your app server which is expected to be `200 OK`. I found myself writing the same "healthcheck" route on every new
-hapi server I make.
-
-Here's something I might actually do to provide a nice "healthcheck" route for a load balancer or something like that.
+hapi server I make. With `hapi-pkg` and it's endpoint option, I can configure a nice "health" route as part of
+loading my plugins.
 
 ```javascript
 server.register({
@@ -121,8 +65,7 @@ server.register({
 `GET "/health"` => `200 OK {"status": "ok"}`
 
 #### Here's a crazy idea.
-
-You could create a really bad mock api for a prototype or something.
+You could serve a mock api for a prototype based on some static data in JSON files or even hardcoded objects and arrays.
 
 ```javascript
 let Hapi = require('hapi');
@@ -131,7 +74,7 @@ let hapiPkg = require('hapi-pkg');
 let server = new Hapi.Server();
 server.connection({ port: 3000 });
 
-// Let's hard code some arrays to be our "database" **air quotes**.
+// Let's hard code some arrays to be our "database".
 let authors =  [
   {
     name: 'will',
@@ -200,8 +143,40 @@ server.register([
 I know that's not a perfect api, but it's pretty good for something I implemented on accident :smiley:
 You're on your own for the PUT/POST/DELETE routes.
 
-## Contribute
+## Options
+#### pkg {object} required
+The plugin will not load if this option is not provided as an object literal.
 
+```javascript
+server.register({
+  register: require('hapi-pkg'),
+  options: { pkg: 'this is a string' }
+}, function(err) {
+  if (err) {
+    console.log(err);
+    // 'hapi-pkg option "pkg" is required to be an object' 
+  }
+});
+```
+
+#### endpoint {string} default:'pkg'
+Routes for this plugin are prefixed with "/pkg" by default. If you'd like to customize that, you can use the `endpoint`
+option.
+
+```javascript
+server.register({
+  register: require('hapi-pkg'),
+  options: {
+    pkg: require('./package.json'),
+    endpoint: 'info'
+  }
+}, function(err) {
+  server.start()
+  // hapi-pkg routes at "/info" instead of "/pkg"
+});
+```
+
+## Contribute
 Please open issues, and if you have something to add feel free to make a Pull Request. This plugin is written in
 ES6 and compiled for use by [babel](http://babeljs.io/). All code contributions should be 100% covered by tests, and
 fully adherent to linting by jshint and .jscs configs.
