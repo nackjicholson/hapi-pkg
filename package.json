@@ -21,7 +21,7 @@
     "url": "git+https://github.com/nackjicholson/hapi-pkg.git"
   },
   "author": "Will Vaughn <willieviseoae@gmail.com>",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/nackjicholson/hapi-pkg/issues"
   },
