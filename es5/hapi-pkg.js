@@ -41,6 +41,7 @@ var _lodashArrayLast2 = _interopRequireDefault(_lodashArrayLast);
 function register(server, _ref, next) {
   var pkg = _ref.pkg;
   var endpoint = _ref.endpoint;
+  var config = _ref.config;
 
   endpoint = endpoint || 'pkg';
 
@@ -71,7 +72,8 @@ function register(server, _ref, next) {
       }
 
       return reply(pkg);
-    }
+    },
+    config: config
   });
 
   next();
@@ -79,7 +81,8 @@ function register(server, _ref, next) {
 
 register.attributes = {
   // This is the hapi-pkg plugins' package.json info, not yours.
-  pkg: require('../package.json')
+  pkg: require('../package.json'),
+  multiple: true
 };
 
 exports['default'] = register;

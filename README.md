@@ -176,6 +176,28 @@ server.register({
 });
 ```
 
+### config {object} optional
+Sets the route configuration options for the pkg routes. For instance this is how you would
+configure an authentication strategy for your pkg routes.
+
+```javascript
+let server = new Server();
+server.connection();
+server.register({
+  register: hapiPkg,
+  options: {
+    pkg: { foo: 'bar' },
+    config: { id: 'pkg', description: 'foobar routes' }
+  }
+}, (err) => {
+  if (err) { throw err; }
+  let route = server.lookup('pkg');
+  // logs route description "foobar routes";
+  console.log(route.settings.description);
+  server.start();
+});
+```
+
 ## Contribute
 Please open issues, and if you have something to add feel free to make a Pull Request. This plugin is written in
 ES6 and compiled for use by [babel](http://babeljs.io/). All code contributions should be 100% covered by tests, and

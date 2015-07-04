@@ -27,6 +27,23 @@ describe('hapi-pkg', () => {
         done();
       });
     });
+
+    it('should take optional route config', (done) => {
+      let server = new Server();
+      server.connection();
+      server.register({
+        register: hapiPkg,
+        options: {
+          pkg: { foo: 'bar' },
+          config: { id: 'pkg', description: 'test.description' }
+        }
+      }, (err) => {
+        if (err) { throw err; }
+        let route = server.lookup('pkg');
+        assert.equal(route.settings.description, 'test.description');
+        done();
+      });
+    });
   });
 
   describe('routes', () => {

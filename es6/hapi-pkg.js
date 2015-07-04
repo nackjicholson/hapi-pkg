@@ -12,7 +12,7 @@ import last from 'lodash/array/last';
  * for the plugin. This defaults to "pkg" which supplies routes like
  * "/pkg", "/pkg/version", "/pkg/dependencies" etc.
  */
-function register(server, {pkg, endpoint}, next) {
+function register(server, {pkg, endpoint, config}, next) {
   endpoint = endpoint || 'pkg';
 
   if (!isPlainObject(pkg)) {
@@ -23,6 +23,7 @@ function register(server, {pkg, endpoint}, next) {
   server.route({
     method: 'GET',
     path: `/${endpoint}/{property*}`,
+    config,
     handler(request, reply) {
       let path;
 
